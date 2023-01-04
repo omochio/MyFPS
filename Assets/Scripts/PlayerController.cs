@@ -7,8 +7,7 @@ namespace Gravity
     public class PlayerController : MonoBehaviour
     {
         // Player speed
-        [SerializeField]
-        float moveSpeed = 1.0f;
+        float moveSpeed = 10.0f;
 
         // Elapsed frame(EF) from keys are pressed
         Dictionary<string, int> pressedEF = new()
