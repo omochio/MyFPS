@@ -4,10 +4,17 @@ using UnityEngine.InputSystem;
 
 namespace Gravity
 {
-    public class PlayerController : MonoBehaviour
+    public class PlayerMovementController : MonoBehaviour
     {
         // Player speed
-        float moveSpeed = 10.0f;
+        [SerializeField] float limitSpeed;
+        [SerializeField] float force;
+
+        // Orientation
+        [SerializeField] Transform orientation;
+
+        Rigidbody rb;
+        Vector3 moveDirection;
 
         // Elapsed frame(EF) from keys are pressed
         Dictionary<string, int> pressedEF = new()
@@ -21,16 +28,24 @@ namespace Gravity
         // Start is called before the first frame update
         void Start()
         {
-            transform.position = Vector3.up;
+            rb = GetComponent<Rigidbody>();
+            rb.freezeRotation = true;
         }
 
         // Update is called once per frame
         void Update()
         {
-            Move();
+            transform.rotation = Camera.main.transform.rotation;
         }
 
-        void Move()
+        private void FixedUpdate()
+        {
+            MovePlayer();
+            SpeedControl();
+        }
+
+        // ToDo: Implement another function to manage input and call in Update()
+        void MovePlayer()
         {
             Vector3 displacement = new();
 
@@ -63,11 +78,11 @@ namespace Gravity
             {
                 if (pressedEF["wKey"] < pressedEF["sKey"])
                 {
-                    displacement += moveSpeed * Time.deltaTime * Vector3.forward;
+                    displacement += Vector3.forward;
                 }
                 else
                 {
-                    displacement += moveSpeed * Time.deltaTime * Vector3.back;
+                    displacement += Vector3.back;
                 }
                 pressedEF["wKey"]++;
                 pressedEF["sKey"]++;
@@ -76,12 +91,12 @@ namespace Gravity
             {
                 if (wKey.isPressed)
                 {
-                    displacement += moveSpeed * Time.deltaTime * Vector3.forward;
+                    displacement += Vector3.forward;
                     pressedEF["wKey"]++;
                 }
                 if (sKey.isPressed)
                 {
-                    displacement += moveSpeed * Time.deltaTime * Vector3.back;
+                    displacement +=  Vector3.back;
                     pressedEF["sKey"]++;
                 }
             }
@@ -90,11 +105,11 @@ namespace Gravity
             {
                 if (pressedEF["aKey"] < pressedEF["dKey"])
                 {
-                    displacement += moveSpeed * Time.deltaTime * Vector3.left;
+                    displacement += Vector3.left;
                 }
                 else
                 {
-                    displacement += moveSpeed * Time.deltaTime * Vector3.right;
+                    displacement += Vector3.right;
                 }
                 pressedEF["aKey"]++;
                 pressedEF["dKey"] = 0;
@@ -103,23 +118,34 @@ namespace Gravity
             {
                 if (aKey.isPressed)
                 {
-                    displacement += moveSpeed * Time.deltaTime * Vector3.left;
+                    displacement += Vector3.left;
                     pressedEF["aKey"]++;
                 }
                 if (dKey.isPressed)
                 {
-                    displacement += moveSpeed * Time.deltaTime * Vector3.right;
+                    displacement += Vector3.right;
                     pressedEF["dKey"]++;
                 }
             }
+
+            moveDirection = orientation.rotation * displacement;
 
             //foreach (var i in pressedEF)
             //{
             //    Debug.Log(i);
             //}
 
-            transform.position += displacement;
+            rb.AddForce(moveDirection.normalized * force, ForceMode.Force);
+        }
 
+        void SpeedControl()
+        {
+            Vector3 flatVel = rb.velocity;
+
+            if (flatVel.magnitude > limitSpeed)
+            {
+                rb.velocity = flatVel.normalized * limitSpeed;
+            }
         }
     }
 }
