@@ -15,6 +15,7 @@ namespace Gravity
 
         Rigidbody rb;
         Vector3 moveDirection;
+        Vector3 displacement = new();
 
         // Elapsed frame(EF) from keys are pressed
         Dictionary<string, int> pressedEF = new()
@@ -36,6 +37,7 @@ namespace Gravity
         void Update()
         {
             transform.rotation = Camera.main.transform.rotation;
+            ManageInput();
         }
 
         private void FixedUpdate()
@@ -43,10 +45,9 @@ namespace Gravity
             MovePlayer();
         }
 
-        // ToDo: Implement another function to manage input and call in Update()
-        void MovePlayer()
+        void ManageInput()
         {
-            Vector3 displacement = new();
+            displacement = Vector3.zero;
 
             // Keyboard input
             var wKey = Keyboard.current.wKey;
@@ -95,7 +96,7 @@ namespace Gravity
                 }
                 if (sKey.isPressed)
                 {
-                    displacement +=  Vector3.back;
+                    displacement += Vector3.back;
                     pressedEF["sKey"]++;
                 }
             }
@@ -129,12 +130,11 @@ namespace Gravity
 
             moveDirection = orientation.rotation * displacement;
 
-            //foreach (var i in pressedEF)
-            //{
-            //    Debug.Log(i);
-            //}
-            //Debug.Log(rb.velocity);
+        }
 
+        // ToDo: Implement another function to manage input and call in Update()
+        void MovePlayer()
+        {
             if (rb.velocity.magnitude < limitSpeed)
             {
                 rb.AddForce(moveDirection.normalized * force, ForceMode.Force);
