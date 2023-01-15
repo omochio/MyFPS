@@ -38,6 +38,7 @@ namespace Gravity
         {
             transform.rotation = Camera.main.transform.rotation;
             ManageInput();
+            LimitPlayerVelocity();
         }
 
         private void FixedUpdate()
@@ -129,15 +130,19 @@ namespace Gravity
             }
 
             moveDirection = orientation.rotation * displacement;
-
         }
 
         // ToDo: Implement another function to manage input and call in Update()
         void MovePlayer()
         {
-            if (rb.velocity.magnitude < limitSpeed)
+            rb.AddForce(moveDirection.normalized * force, ForceMode.Force);
+        }
+
+        void LimitPlayerVelocity()
+        {
+            if (rb.velocity.magnitude > limitSpeed)
             {
-                rb.AddForce(moveDirection.normalized * force, ForceMode.Force);
+                rb.velocity = moveDirection.normalized * limitSpeed;
             }
         }
     }
