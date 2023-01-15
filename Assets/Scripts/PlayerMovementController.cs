@@ -11,6 +11,7 @@ namespace Gravity
         [SerializeField] float boostLimitSpeed;
         [SerializeField] float force;
         [SerializeField] float boostForce;
+        [SerializeField] float dodgeLength;
 
         // Orientation
         [SerializeField] Transform orientation;
@@ -26,7 +27,8 @@ namespace Gravity
             {"aKey", 0},
             {"sKey", 0},
             {"dKey", 0},
-            {"shiftKey", 0}
+            {"shiftKey", 0},
+            {"ctrlKey", 0}
         };
 
         // Start is called before the first frame update
@@ -41,12 +43,12 @@ namespace Gravity
         {
             transform.rotation = Camera.main.transform.rotation;
             ManageInput();
-            LimitPlayerVelocity();
+            LimitVelocity();
         }
 
         private void FixedUpdate()
         {
-            MovePlayer();
+            Move();
         }
 
         void ManageInput()
@@ -59,6 +61,7 @@ namespace Gravity
             var sKey = Keyboard.current.sKey;
             var dKey = Keyboard.current.dKey;
             var shiftKey = Keyboard.current.shiftKey;
+            var ctrlKey = Keyboard.current.ctrlKey;
 
             // When release keys, reset elapsed time
             if (wKey.wasReleasedThisFrame)
@@ -81,8 +84,16 @@ namespace Gravity
             {
                 pressedEF["shiftKey"] = 0;
             }
+            if (ctrlKey.wasReleasedThisFrame)
+            {
+                pressedEF["ctrlKey"] = 0;
+            }
 
-            // While Shift key is pressed, turn on boost
+            if (ctrlKey.isPressed)
+            {
+                pressedEF["ctrlKey"]++;
+            }
+
             if (shiftKey.isPressed)
             {
                 pressedEF["shiftKey"]++;
@@ -146,7 +157,7 @@ namespace Gravity
             moveDirection = orientation.rotation * displacement;
         }
 
-        void MovePlayer()
+        void Move()
         {
             if (pressedEF["shiftKey"] == 0)
             {
@@ -154,11 +165,18 @@ namespace Gravity
             }
             else
             {
+                // While Shift key is pressed, turn on boost
                 rb.AddForce(moveDirection.normalized * boostForce, ForceMode.Force);
+            }
+
+            // When Ctrl key is pressed, dodge
+            if (pressedEF["ctrlKey"] == 1)
+            {
+                transform.position += moveDirection.normalized * dodgeLength;
             }
         }
 
-        void LimitPlayerVelocity()
+        void LimitVelocity()
         {
             if (pressedEF["shiftKey"] == 0)
             {
