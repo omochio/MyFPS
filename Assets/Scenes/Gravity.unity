@@ -1466,5 +1466,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   limitSpeed: 25
+  boostLimitSpeed: 50
   force: 100
+  boostForce: 200
   orientation: {fileID: 954996766}

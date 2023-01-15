@@ -8,7 +8,9 @@ namespace Gravity
     {
         // Player speed
         [SerializeField] float limitSpeed;
+        [SerializeField] float boostLimitSpeed;
         [SerializeField] float force;
+        [SerializeField] float boostForce;
 
         // Orientation
         [SerializeField] Transform orientation;
@@ -20,10 +22,11 @@ namespace Gravity
         // Elapsed frame(EF) from keys are pressed
         Dictionary<string, int> pressedEF = new()
         {
-            {"wKey", 0 },
-            {"aKey", 0 },
-            {"sKey", 0 },
-            {"dKey", 0 }
+            {"wKey", 0},
+            {"aKey", 0},
+            {"sKey", 0},
+            {"dKey", 0},
+            {"shiftKey", 0}
         };
 
         // Start is called before the first frame update
@@ -55,6 +58,7 @@ namespace Gravity
             var aKey = Keyboard.current.aKey;
             var sKey = Keyboard.current.sKey;
             var dKey = Keyboard.current.dKey;
+            var shiftKey = Keyboard.current.shiftKey;
 
             // When release keys, reset elapsed time
             if (wKey.wasReleasedThisFrame)
@@ -72,6 +76,16 @@ namespace Gravity
             if (dKey.wasReleasedThisFrame)
             {
                 pressedEF["dKey"] = 0;
+            }
+            if (shiftKey.wasReleasedThisFrame)
+            {
+                pressedEF["shiftKey"] = 0;
+            }
+
+            // While Shift key is pressed, turn on boost
+            if (shiftKey.isPressed)
+            {
+                pressedEF["shiftKey"]++;
             }
 
             // If W key and S key are pressed when already pressed another one, prioritize latter one
@@ -132,17 +146,33 @@ namespace Gravity
             moveDirection = orientation.rotation * displacement;
         }
 
-        // ToDo: Implement another function to manage input and call in Update()
         void MovePlayer()
         {
-            rb.AddForce(moveDirection.normalized * force, ForceMode.Force);
+            if (pressedEF["shiftKey"] == 0)
+            {
+                rb.AddForce(moveDirection.normalized * force, ForceMode.Force);
+            }
+            else
+            {
+                rb.AddForce(moveDirection.normalized * boostForce, ForceMode.Force);
+            }
         }
 
         void LimitPlayerVelocity()
         {
-            if (rb.velocity.magnitude > limitSpeed)
+            if (pressedEF["shiftKey"] == 0)
             {
-                rb.velocity = moveDirection.normalized * limitSpeed;
+                if (rb.velocity.magnitude > limitSpeed)
+                {
+                    rb.velocity = moveDirection.normalized * limitSpeed;
+                }
+            }
+            else
+            {
+                if (rb.velocity.magnitude > boostLimitSpeed)
+                {
+                    rb.velocity = moveDirection.normalized * boostLimitSpeed;
+                }
             }
         }
     }
