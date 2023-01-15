@@ -41,7 +41,6 @@ namespace Gravity
         private void FixedUpdate()
         {
             MovePlayer();
-            SpeedControl();
         }
 
         // ToDo: Implement another function to manage input and call in Update()
@@ -134,17 +133,11 @@ namespace Gravity
             //{
             //    Debug.Log(i);
             //}
+            //Debug.Log(rb.velocity);
 
-            rb.AddForce(moveDirection.normalized * force, ForceMode.Force);
-        }
-
-        void SpeedControl()
-        {
-            Vector3 flatVel = rb.velocity;
-
-            if (flatVel.magnitude > limitSpeed)
+            if (rb.velocity.magnitude < limitSpeed)
             {
-                rb.velocity = flatVel.normalized * limitSpeed;
+                rb.AddForce(moveDirection.normalized * force, ForceMode.Force);
             }
         }
     }
