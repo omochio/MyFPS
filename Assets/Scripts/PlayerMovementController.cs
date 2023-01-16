@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace Gravity
+namespace Player
 {
     public class PlayerMovementController : MonoBehaviour
     {
@@ -20,20 +20,13 @@ namespace Gravity
         Vector3 m_moveDirection;
         Vector3 m_displacement = new();
 
-        // Elapsed frame(EF) from keys are pressed
-        Dictionary<string, int> pressedEF = new()
-        {
-            {"wKey", 0},
-            {"aKey", 0},
-            {"sKey", 0},
-            {"dKey", 0},
-            {"shiftKey", 0},
-            {"ctrlKey", 0}
-        };
+        // Player input manager
+        PlayerInputManager m_playerInputManager;
 
         // Start is called before the first frame update
         void Start()
         {
+            m_playerInputManager = GetComponent<PlayerInputManager>();
             m_rb = GetComponent<Rigidbody>();
             m_rb.freezeRotation = true;
         }
@@ -42,7 +35,7 @@ namespace Gravity
         void Update()
         {
             transform.rotation = Camera.main.transform.rotation;
-            ManageInput();
+            CalcDisplacement();
             LimitVelocity();
         }
 
@@ -51,11 +44,11 @@ namespace Gravity
             Move();
         }
 
-        void ManageInput()
+        void CalcDisplacement()
         {
             m_displacement = Vector3.zero;
 
-            // Keyboard input
+            // Keyboard inputs
             var wKey = Keyboard.current.wKey;
             var aKey = Keyboard.current.aKey;
             var sKey = Keyboard.current.sKey;
@@ -63,46 +56,14 @@ namespace Gravity
             var shiftKey = Keyboard.current.shiftKey;
             var ctrlKey = Keyboard.current.ctrlKey;
 
-            // When release keys, reset elapsed time
-            if (wKey.wasReleasedThisFrame)
-            {
-                pressedEF["wKey"] = 0;
-            }
-            if (aKey.wasReleasedThisFrame)
-            {
-                pressedEF["aKey"] = 0;
-            }
-            if (sKey.wasReleasedThisFrame)
-            {
-                pressedEF["sKey"] = 0;
-            }
-            if (dKey.wasReleasedThisFrame)
-            {
-                pressedEF["dKey"] = 0;
-            }
-            if (shiftKey.wasReleasedThisFrame)
-            {
-                pressedEF["shiftKey"] = 0;
-            }
-            if (ctrlKey.wasReleasedThisFrame)
-            {
-                pressedEF["ctrlKey"] = 0;
-            }
-
-            if (ctrlKey.isPressed)
-            {
-                pressedEF["ctrlKey"]++;
-            }
-
-            if (shiftKey.isPressed)
-            {
-                pressedEF["shiftKey"]++;
-            }
+            // Mouse button inputs
+            var mLeftButton = Mouse.current.leftButton;
+            var mRightButton = Mouse.current.rightButton;
 
             // If W key and S key are pressed when already pressed another one, prioritize latter one
             if (wKey.isPressed && sKey.isPressed)
             {
-                if (pressedEF["wKey"] < pressedEF["sKey"])
+                if (m_playerInputManager.iptElapsedframe[PlayerInputManager.InputList.WKey] < m_playerInputManager.iptElapsedframe[PlayerInputManager.InputList.SKey])
                 {
                     m_displacement += Vector3.forward;
                 }
@@ -110,26 +71,22 @@ namespace Gravity
                 {
                     m_displacement += Vector3.back;
                 }
-                pressedEF["wKey"]++;
-                pressedEF["sKey"]++;
             }
             else
             {
                 if (wKey.isPressed)
                 {
                     m_displacement += Vector3.forward;
-                    pressedEF["wKey"]++;
                 }
                 if (sKey.isPressed)
                 {
                     m_displacement += Vector3.back;
-                    pressedEF["sKey"]++;
                 }
             }
             // If A key and D key are pressed when already pressed another one, prioritize latter one
             if (aKey.isPressed && dKey.isPressed)
             {
-                if (pressedEF["aKey"] < pressedEF["dKey"])
+                if (m_playerInputManager.iptElapsedframe[PlayerInputManager.InputList.AKey] < m_playerInputManager.iptElapsedframe[PlayerInputManager.InputList.DKey])
                 {
                     m_displacement += Vector3.left;
                 }
@@ -137,20 +94,16 @@ namespace Gravity
                 {
                     m_displacement += Vector3.right;
                 }
-                pressedEF["aKey"]++;
-                pressedEF["dKey"] = 0;
             }
             else
             {
                 if (aKey.isPressed)
                 {
-                    m_displacement += Vector3.left;
-                    pressedEF["aKey"]++;
+                    m_displacement += Vector3.left;                     
                 }
                 if (dKey.isPressed)
                 {
                     m_displacement += Vector3.right;
-                    pressedEF["dKey"]++;
                 }
             }
 
@@ -159,7 +112,7 @@ namespace Gravity
 
         void Move()
         {
-            if (pressedEF["shiftKey"] == 0)
+            if (m_playerInputManager.iptElapsedframe[PlayerInputManager.InputList.ShiftKey] == 0)
             {
                 m_rb.AddForce(m_moveDirection.normalized * force, ForceMode.Force);
             }
@@ -170,7 +123,7 @@ namespace Gravity
             }
 
             // When Ctrl key is pressed, dodge
-            if (pressedEF["ctrlKey"] == 1)
+            if (m_playerInputManager.iptElapsedframe[PlayerInputManager.InputList.CtrlKey] == 1)
             {
                 transform.position += m_moveDirection.normalized * dodgeLength;
             }
@@ -178,7 +131,7 @@ namespace Gravity
 
         void LimitVelocity()
         {
-            if (pressedEF["shiftKey"] == 0)
+            if (m_playerInputManager.iptElapsedframe[PlayerInputManager.InputList.ShiftKey] == 0)
             {
                 if (m_rb.velocity.magnitude > limitSpeed)
                 {

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Gravity
+namespace Enemy
 {
     public class EnemyMovementController : MonoBehaviour
     {
