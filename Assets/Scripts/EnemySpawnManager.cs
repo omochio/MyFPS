@@ -9,10 +9,10 @@ public class EnemySpawnManager : MonoBehaviour
     [SerializeField] float spawnTime;
     [SerializeField] int enemyCountLimit;
 
-    int enemyCount;
-    Vector3 spawnPosition;
+    int m_enemyCount;
+    Vector3 m_spawnPosition;
 
-    float timeCount = 0;
+    float m_timeCount = 0;
 
     // Start is called before the first frame update
     void Start()
@@ -35,23 +35,23 @@ public class EnemySpawnManager : MonoBehaviour
 
     void Update()
     {
-        if (enemyCount > enemyCountLimit)
+        if (m_enemyCount > enemyCountLimit)
         {
             return;
         }
 
-        timeCount += Time.deltaTime;
+        m_timeCount += Time.deltaTime;
 
-        if (timeCount >= spawnTime && reference.IsDone)
+        if (m_timeCount >= spawnTime && reference.IsDone)
         {
-            spawnPosition.Set(
+            m_spawnPosition.Set(
             Random.Range(-50.0f, 50.0f),
             Random.Range(-50.0f, 50.0f),
             Random.Range(-50.0f, 50.0f));
-            Instantiate(reference.Asset, spawnPosition, Quaternion.identity, parentTransform);
-            Debug.Log($"Enemy popped! Count: {enemyCount}");
-            timeCount = 0;
-            enemyCount += 1;
+            Instantiate(reference.Asset, m_spawnPosition, Quaternion.identity, parentTransform);
+            Debug.Log($"Enemy popped! Count: {m_enemyCount}");
+            m_timeCount = 0;
+            m_enemyCount += 1;
         }
     }
 

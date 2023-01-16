@@ -11,16 +11,16 @@ namespace Gravity
         // Orientation
         [SerializeField] Transform orientation;
 
-        Rigidbody rb;
-        Vector3 moveDirection;
-        Vector3 displacement;
-        Vector3 rotation;
+        Rigidbody m_rb;
+        Vector3 m_moveDirection;
+        Vector3 m_displacement;
+        Vector3 m_rotation;
 
         // Start is called before the first frame update
         void Start()
         {
-            rb = GetComponent<Rigidbody>();
-            rb.freezeRotation = true;
+            m_rb = GetComponent<Rigidbody>();
+            m_rb.freezeRotation = true;
         }
 
         private void FixedUpdate()
@@ -31,28 +31,28 @@ namespace Gravity
 
         void MoveEnemy()
         {
-            displacement.Set(
+            m_displacement.Set(
                 Random.Range(0, 2), 
                 Random.Range(0, 2), 
                 Random.Range(0, 2));
-            moveDirection = orientation.rotation * displacement;
+            m_moveDirection = orientation.rotation * m_displacement;
 
-            rotation.Set(
+            m_rotation.Set(
             Random.Range(0.0f, 360.0f),
             Random.Range(0.0f, 360.0f),
             Random.Range(0.0f, 360.0f));            
-            transform.rotation = Quaternion.Euler(rotation);
+            transform.rotation = Quaternion.Euler(m_rotation);
 
-            rb.AddForce(moveDirection.normalized * force, ForceMode.Force);
+            m_rb.AddForce(m_moveDirection.normalized * force, ForceMode.Force);
         }
 
         void SpeedControl()
         {
-            Vector3 flatVel = rb.velocity;
+            Vector3 flatVel = m_rb.velocity;
 
             if (flatVel.magnitude > limitSpeed)
             {
-                rb.velocity = flatVel.normalized * limitSpeed;
+                m_rb.velocity = flatVel.normalized * limitSpeed;
             }
         }
     }

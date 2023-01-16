@@ -11,8 +11,8 @@ public class PlayerCameraController : MonoBehaviour
     // Player orientation
     [SerializeField] Transform orientation;
 
-    float xRotation = 0;
-    float yRotation = 0;
+    float m_xRotation = 0;
+    float m_yRotation = 0;
 
     // Start is called before the first frame update
     void Start()
@@ -27,10 +27,10 @@ public class PlayerCameraController : MonoBehaviour
         float mouseX = Pointer.current.delta.ReadValue().x * Time.deltaTime * sensX;
         float mouseY = Pointer.current.delta.ReadValue().y * Time.deltaTime * sensY;
 
-        yRotation += mouseX;
-        xRotation -= mouseY;
+        m_yRotation += mouseX;
+        m_xRotation -= mouseY;
         //xRotation = Mathf.Clamp(xRotation, -90f, 90f);
 
-        transform.rotation = Quaternion.Euler(xRotation, yRotation, 0);
+        transform.rotation = Quaternion.Euler(m_xRotation, m_yRotation, 0);
     }
 }

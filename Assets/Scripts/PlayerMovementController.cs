@@ -16,9 +16,9 @@ namespace Gravity
         // Orientation
         [SerializeField] Transform orientation;
 
-        Rigidbody rb;
-        Vector3 moveDirection;
-        Vector3 displacement = new();
+        Rigidbody m_rb;
+        Vector3 m_moveDirection;
+        Vector3 m_displacement = new();
 
         // Elapsed frame(EF) from keys are pressed
         Dictionary<string, int> pressedEF = new()
@@ -34,8 +34,8 @@ namespace Gravity
         // Start is called before the first frame update
         void Start()
         {
-            rb = GetComponent<Rigidbody>();
-            rb.freezeRotation = true;
+            m_rb = GetComponent<Rigidbody>();
+            m_rb.freezeRotation = true;
         }
 
         // Update is called once per frame
@@ -53,7 +53,7 @@ namespace Gravity
 
         void ManageInput()
         {
-            displacement = Vector3.zero;
+            m_displacement = Vector3.zero;
 
             // Keyboard input
             var wKey = Keyboard.current.wKey;
@@ -104,11 +104,11 @@ namespace Gravity
             {
                 if (pressedEF["wKey"] < pressedEF["sKey"])
                 {
-                    displacement += Vector3.forward;
+                    m_displacement += Vector3.forward;
                 }
                 else
                 {
-                    displacement += Vector3.back;
+                    m_displacement += Vector3.back;
                 }
                 pressedEF["wKey"]++;
                 pressedEF["sKey"]++;
@@ -117,12 +117,12 @@ namespace Gravity
             {
                 if (wKey.isPressed)
                 {
-                    displacement += Vector3.forward;
+                    m_displacement += Vector3.forward;
                     pressedEF["wKey"]++;
                 }
                 if (sKey.isPressed)
                 {
-                    displacement += Vector3.back;
+                    m_displacement += Vector3.back;
                     pressedEF["sKey"]++;
                 }
             }
@@ -131,11 +131,11 @@ namespace Gravity
             {
                 if (pressedEF["aKey"] < pressedEF["dKey"])
                 {
-                    displacement += Vector3.left;
+                    m_displacement += Vector3.left;
                 }
                 else
                 {
-                    displacement += Vector3.right;
+                    m_displacement += Vector3.right;
                 }
                 pressedEF["aKey"]++;
                 pressedEF["dKey"] = 0;
@@ -144,35 +144,35 @@ namespace Gravity
             {
                 if (aKey.isPressed)
                 {
-                    displacement += Vector3.left;
+                    m_displacement += Vector3.left;
                     pressedEF["aKey"]++;
                 }
                 if (dKey.isPressed)
                 {
-                    displacement += Vector3.right;
+                    m_displacement += Vector3.right;
                     pressedEF["dKey"]++;
                 }
             }
 
-            moveDirection = orientation.rotation * displacement;
+            m_moveDirection = orientation.rotation * m_displacement;
         }
 
         void Move()
         {
             if (pressedEF["shiftKey"] == 0)
             {
-                rb.AddForce(moveDirection.normalized * force, ForceMode.Force);
+                m_rb.AddForce(m_moveDirection.normalized * force, ForceMode.Force);
             }
             else
             {
                 // While Shift key is pressed, turn on boost
-                rb.AddForce(moveDirection.normalized * boostForce, ForceMode.Force);
+                m_rb.AddForce(m_moveDirection.normalized * boostForce, ForceMode.Force);
             }
 
             // When Ctrl key is pressed, dodge
             if (pressedEF["ctrlKey"] == 1)
             {
-                transform.position += moveDirection.normalized * dodgeLength;
+                transform.position += m_moveDirection.normalized * dodgeLength;
             }
         }
 
@@ -180,16 +180,16 @@ namespace Gravity
         {
             if (pressedEF["shiftKey"] == 0)
             {
-                if (rb.velocity.magnitude > limitSpeed)
+                if (m_rb.velocity.magnitude > limitSpeed)
                 {
-                    rb.velocity = moveDirection.normalized * limitSpeed;
+                    m_rb.velocity = m_moveDirection.normalized * limitSpeed;
                 }
             }
             else
             {
-                if (rb.velocity.magnitude > boostLimitSpeed)
+                if (m_rb.velocity.magnitude > boostLimitSpeed)
                 {
-                    rb.velocity = moveDirection.normalized * boostLimitSpeed;
+                    m_rb.velocity = m_moveDirection.normalized * boostLimitSpeed;
                 }
             }
         }
