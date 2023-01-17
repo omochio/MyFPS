@@ -31,7 +31,7 @@ namespace Player
 
             m_yRotation += mouseX;
             m_xRotation -= mouseY;
-            //xRotation = Mathf.Clamp(xRotation, -90f, 90f);
+            m_xRotation = Mathf.Clamp(m_xRotation, -90f, 90f);
 
             transform.rotation = Quaternion.Euler(m_xRotation, m_yRotation, 0);
         }
