@@ -1294,10 +1294,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1237206992}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 55c0767ec7cd664489b8126fd65683e1, type: 3}
+  m_Script: {fileID: 11500000, guid: 4e05bf25c633a194892c1fd6f3d09a25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  reference:
+  enemyRef:
     m_AssetGUID: bfa9630ad51eea6479fb177388dc3803
     m_SubObjectName: 
     m_SubObjectType: 
@@ -1482,6 +1482,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 2046148454}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f033d31d262dc564d8b860dedee56bd7, type: 3}
+  m_Script: {fileID: 11500000, guid: 909ea250fe3766143918ce17c5a00713, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rayRef:
+    m_AssetGUID: ea309e36fc9c99046894320aa0ac6763
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0

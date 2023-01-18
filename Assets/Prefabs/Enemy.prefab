@@ -57,8 +57,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9031725653543801955}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 10, y: 10, z: 10}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 9031725653106454913}
@@ -91,7 +91,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 9031725653543801955}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ca7411466120644f889e6839ce03929, type: 3}
+  m_Script: {fileID: 11500000, guid: 74e8b5eb129fbc74b86e6dd558549f3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   limitSpeed: 25
@@ -111,7 +111,7 @@ GameObject:
   - component: {fileID: 9031725654084874982}
   m_Layer: 0
   m_Name: EnemyObj
-  m_TagString: Untagged
+  m_TagString: Destroyable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

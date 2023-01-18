@@ -21,10 +21,13 @@ namespace Player
         // Player input manager
         InputElapsedFrameManager m_inputElapsedFrame;
 
-        // Start is called before the first frame update
-        void Start()
+        void Awake()
         {
             m_inputElapsedFrame = gameObject.AddComponent<InputElapsedFrameManager>();
+        }
+
+        void Start()
+        {
             m_rb = GetComponent<Rigidbody>();
             m_rb.freezeRotation = true;
         }

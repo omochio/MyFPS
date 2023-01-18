@@ -21,6 +21,10 @@ MonoBehaviour:
     m_Address: EnemyPrefab
     m_ReadOnly: 0
     m_SerializedLabels: []
+  - m_GUID: ea309e36fc9c99046894320aa0ac6763
+    m_Address: RayPrefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 4562560a61b16b4478744a6c5780876b, type: 2}
   m_SchemaSet:
