@@ -26,7 +26,7 @@ namespace Player
                 {InputList.ShiftKey, 0},
             };
 
-        public Dictionary<InputList, int> GetInputElapsedFrame()
+        public Dictionary<InputList, int> GetIptElapsedFrameDict()
         {
             // Keyboard inputs
             var wKey = Keyboard.current.wKey;
