@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -6,12 +7,11 @@ namespace Player
 {
     public class PlayerMovementController : MonoBehaviour
     {
-        // Player speed
-        [SerializeField] float limitSpeed;
+        // Player speed variables
+        [SerializeField] float normalLimitSpeed;
         [SerializeField] float boostLimitSpeed;
-        [SerializeField] float force;
+        [SerializeField] float normalForce;
         [SerializeField] float boostForce;
-        [SerializeField] float dodgeLength;
 
         // Orientation
         [SerializeField] Transform orientation;
@@ -19,11 +19,11 @@ namespace Player
         Rigidbody m_rb;
 
         // Player input manager
-        InputElapsedFrameManager m_inputElapsedFrame;
+        InputElapsedFrameManager m_iptElapsedFrameMgr;
 
         void Awake()
         {
-            m_inputElapsedFrame = gameObject.AddComponent<InputElapsedFrameManager>();
+            m_iptElapsedFrameMgr = gameObject.AddComponent<InputElapsedFrameManager>();
         }
 
         void Start()
@@ -36,18 +36,17 @@ namespace Player
         void Update()
         {
             transform.rotation = Camera.main.transform.rotation;
-            LimitVelocity(CalcMoveDirection(), m_inputElapsedFrame.GetInputElapsedFrame());
         }
 
         private void FixedUpdate()
         {
-            Move(CalcMoveDirection(), m_inputElapsedFrame.GetInputElapsedFrame());
+            Move(GetMoveDirection(), m_iptElapsedFrameMgr.GetIptElapsedFrameDict());
         }
 
-        Vector3 CalcMoveDirection()
+        Vector3 GetMoveDirection()
         {
             Vector3 displacement = new();
-            var iptElapsedFrameDict = m_inputElapsedFrame.GetInputElapsedFrame(); 
+            var iptElapsedFrameDict = m_iptElapsedFrameMgr.GetIptElapsedFrameDict(); 
 
             // Keyboard inputs
             var wKey = Keyboard.current.wKey;
@@ -104,38 +103,30 @@ namespace Player
 
             Vector3 moveDirection = orientation.rotation * displacement;
 
-            return moveDirection;
+            return moveDirection.normalized;
         }
 
         void Move(Vector3 moveDirection, Dictionary<InputElapsedFrameManager.InputList, int> iptElapsedFrameDict)
         {
+            float force, limitSpeed;
+            // Turn boost mode on if shift key is pressed
             if (iptElapsedFrameDict[InputElapsedFrameManager.InputList.ShiftKey] == 0)
             {
-                m_rb.AddForce(moveDirection.normalized * force, ForceMode.Force);
+                force = normalForce;
+                limitSpeed = normalLimitSpeed;
             }
             else
             {
-                // While Shift key is pressed, turn on boost
-                m_rb.AddForce(moveDirection.normalized * boostForce, ForceMode.Force);
+                force = boostForce;
+                limitSpeed = boostLimitSpeed;
             }
-        }
 
-        void LimitVelocity(Vector3 moveDirection, Dictionary<InputElapsedFrameManager.InputList, int> iptElapsedFrameDict)
-        {
-            if (iptElapsedFrameDict[InputElapsedFrameManager.InputList.ShiftKey] == 0)
-            {
-                if (m_rb.velocity.magnitude > limitSpeed)
-                {
-                    m_rb.velocity = moveDirection.normalized * limitSpeed;
-                }
-            }
-            else
-            {
-                if (m_rb.velocity.magnitude > boostLimitSpeed)
-                {
-                    m_rb.velocity = moveDirection.normalized * boostLimitSpeed;
-                }
-            }
+            // Limit player speed by adding opposite direction force
+            // The closer the speed to limitSpeed, the greater the force from opposite direction
+            // The father the moveDirection to velocity, the smaller the force from opposite direction
+            var k = Mathf.Clamp(m_rb.velocity.magnitude / limitSpeed, 0.0f, 1.0f) * (1 - Mathf.Acos(Vector3.Dot(m_rb.velocity.normalized, moveDirection)) / Mathf.PI / 2);
+            m_rb.AddForce(force * moveDirection, ForceMode.Force);
+            m_rb.AddForce(force * k * -moveDirection, ForceMode.Force);
         }
     }
 }
