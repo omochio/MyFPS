@@ -1,4 +1,3 @@
-using UnityEditor.ShaderGraph;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -11,7 +10,7 @@ namespace Player
         [SerializeField] float sensY = 0;
 
         // Player orientation
-        [SerializeField] Transform orientation;
+        //[SerializeField] Transform orientation;
 
         float m_xRotation = 0;
         float m_yRotation = 0;
@@ -26,8 +25,8 @@ namespace Player
         // Update is called once per frame
         void Update()
         {
-            float mouseX = Pointer.current.delta.ReadValue().x * Time.deltaTime * sensX;
-            float mouseY = Pointer.current.delta.ReadValue().y * Time.deltaTime * sensY;
+            float mouseX = Mouse.current.delta.ReadValue().x * Time.deltaTime * sensX;
+            float mouseY = Mouse.current.delta.ReadValue().y * Time.deltaTime * sensY;
 
             m_yRotation += mouseX;
             m_xRotation -= mouseY;
