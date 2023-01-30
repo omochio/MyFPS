@@ -19,11 +19,11 @@ namespace Player
         // Elapsed frame(EF) from keys or buttons are pressed
         private readonly Dictionary<InputList, int> m_iptElapsedFrameDict = new()
             {
-                {InputList.WKey, 0},
-                {InputList.AKey, 0},
-                {InputList.SKey, 0},
-                {InputList.DKey, 0},
-                {InputList.ShiftKey, 0},
+                { InputList.WKey, 0 },
+                { InputList.AKey, 0 },
+                { InputList.SKey, 0 },
+                { InputList.DKey, 0 },
+                { InputList.ShiftKey, 0 }
             };
 
         public Dictionary<InputList, int> GetIptElapsedFrameDict()
