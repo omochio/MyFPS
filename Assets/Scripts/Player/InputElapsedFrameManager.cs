@@ -14,6 +14,8 @@ namespace Player
             SKey,
             DKey,
             ShiftKey,
+            SpaceKey,
+            CtrlKey
         }
 
         // Elapsed frame(EF) from keys or buttons are pressed
@@ -23,7 +25,9 @@ namespace Player
                 { InputList.AKey, 0 },
                 { InputList.SKey, 0 },
                 { InputList.DKey, 0 },
-                { InputList.ShiftKey, 0 }
+                { InputList.ShiftKey, 0 },
+                { InputList.SpaceKey, 0 }, 
+                { InputList.CtrlKey, 0 },
             };
 
         public Dictionary<InputList, int> GetIptElapsedFrameDict()
@@ -34,6 +38,8 @@ namespace Player
             var sKey = Keyboard.current.sKey;
             var dKey = Keyboard.current.dKey;
             var shiftKey = Keyboard.current.shiftKey;
+            var spaceKey = Keyboard.current.spaceKey;
+            var ctrlKey = Keyboard.current.ctrlKey;
 
             // When release keys, reset elapsed time
             if (wKey.wasReleasedThisFrame)
@@ -56,6 +62,14 @@ namespace Player
             {
                 m_iptElapsedFrameDict[InputList.ShiftKey] = 0;
             }
+            if (spaceKey.wasReleasedThisFrame)
+            {
+                m_iptElapsedFrameDict[InputList.SpaceKey] = 0;
+            }
+            if (ctrlKey.wasReleasedThisFrame)
+            {
+                m_iptElapsedFrameDict[InputList.CtrlKey] = 0;
+            }
 
             // When press keys, add elapsed time
             if (wKey.isPressed)
@@ -77,6 +91,14 @@ namespace Player
             if (shiftKey.isPressed)
             {
                 m_iptElapsedFrameDict[InputList.ShiftKey]++;
+            }
+            if (spaceKey.isPressed)
+            {
+                m_iptElapsedFrameDict[InputList.SpaceKey]++;
+            }
+            if (ctrlKey.isPressed)
+            {
+                m_iptElapsedFrameDict[(InputList.CtrlKey)]++;
             }
 
             return m_iptElapsedFrameDict;

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -45,7 +44,7 @@ namespace Player
 
         Vector3 GetMoveDirection()
         {
-            Vector3 displacement = new();
+            Vector3 moveDirection = new();
             var iptElapsedFrameDict = m_iptElapsedFrameMgr.GetIptElapsedFrameDict(); 
 
             // Keyboard inputs
@@ -53,28 +52,30 @@ namespace Player
             var aKey = Keyboard.current.aKey;
             var sKey = Keyboard.current.sKey;
             var dKey = Keyboard.current.dKey;
+            var spaceKey = Keyboard.current.spaceKey;
+            var ctrlKey = Keyboard.current.ctrlKey;
 
             // If W key and S key are pressed when already pressed another one, prioritize latter one
             if (wKey.isPressed && sKey.isPressed)
             {
                 if (iptElapsedFrameDict[InputElapsedFrameManager.InputList.WKey] < iptElapsedFrameDict[InputElapsedFrameManager.InputList.SKey])
                 {
-                    displacement += Vector3.forward;
+                    moveDirection += Vector3.forward;
                 }
                 else
                 {
-                    displacement += Vector3.back;
+                    moveDirection += Vector3.back;
                 }
             }
             else
             {
                 if (wKey.isPressed)
                 {
-                    displacement += Vector3.forward;
+                    moveDirection += Vector3.forward;
                 }
                 if (sKey.isPressed)
                 {
-                    displacement += Vector3.back;
+                    moveDirection += Vector3.back;
                 }
             }
             // If A key and D key are pressed when already pressed another one, prioritize latter one
@@ -82,26 +83,50 @@ namespace Player
             {
                 if (iptElapsedFrameDict[InputElapsedFrameManager.InputList.AKey] < iptElapsedFrameDict[InputElapsedFrameManager.InputList.DKey])
                 {
-                    displacement += Vector3.left;
+                    moveDirection += Vector3.left;
                 }
                 else
                 {
-                    displacement += Vector3.right;
+                    moveDirection += Vector3.right;
                 }
             }
             else
             {
                 if (aKey.isPressed)
                 {
-                    displacement += Vector3.left;                     
+                    moveDirection += Vector3.left;                     
                 }
                 if (dKey.isPressed)
                 {
-                    displacement += Vector3.right;
+                    moveDirection += Vector3.right;
                 }
             }
 
-            Vector3 moveDirection = orientation.rotation * displacement;
+            moveDirection = orientation.rotation * moveDirection;
+
+            // If Space key and Ctrl key are pressed when already pressed another one, prioritize latter one
+            if (spaceKey.isPressed && ctrlKey.isPressed)
+            {
+                if (iptElapsedFrameDict[InputElapsedFrameManager.InputList.SpaceKey] < iptElapsedFrameDict[InputElapsedFrameManager.InputList.CtrlKey])
+                {
+                    moveDirection += Vector3.up * 5;
+                }
+                else
+                {
+                    moveDirection += Vector3.down * 5;
+                }
+            }
+            else
+            {
+                if (spaceKey.isPressed)
+                {
+                    moveDirection += Vector3.up * 5;
+                }
+                if (ctrlKey.isPressed)
+                {
+                    moveDirection += Vector3.down * 5;
+                }
+            }
 
             return moveDirection.normalized;
         }
@@ -124,7 +149,7 @@ namespace Player
             // Limit player speed by adding opposite direction force
             // The closer the speed to limitSpeed, the greater the force from opposite direction
             // The father the moveDirection to velocity, the smaller the force from opposite direction
-            var k = Mathf.Clamp(m_rb.velocity.magnitude / limitSpeed, 0.0f, 1.0f) * (1 - Mathf.Acos(Vector3.Dot(m_rb.velocity.normalized, moveDirection)) / Mathf.PI / 2);
+            var k = Mathf.Clamp01(m_rb.velocity.magnitude / limitSpeed) * (1 - Mathf.Acos(Mathf.Clamp01(Vector3.Dot(m_rb.velocity.normalized, moveDirection))) / Mathf.PI / 2);
             m_rb.AddForce(force * moveDirection, ForceMode.Force);
             m_rb.AddForce(force * k * -moveDirection, ForceMode.Force);
         }

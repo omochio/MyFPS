@@ -3061,8 +3061,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d6dc067361dfdee4597708a779298d2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  normalLimitSpeed: 25
-  boostLimitSpeed: 50
+  normalLimitSpeed: 50
+  boostLimitSpeed: 100
   normalForce: 100
   boostForce: 200
   orientation: {fileID: 954996766}
