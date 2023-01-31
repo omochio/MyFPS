@@ -1,17 +1,19 @@
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
-using UnityEngine.ResourceManagement.AsyncOperations;
 
 namespace Level
 {
     public class LevelGenerationManager : MonoBehaviour
     {
+        // Prefab references
         [SerializeField] AssetReference m_obstacleRef;
         [SerializeField] AssetReference m_tunnelRef;
+
+        // Parent transform of instantiated objects
         [SerializeField] Transform m_tunnelParentTransform;
         [SerializeField] Transform m_obstacleParentTransform;
+
+        // Tunnel and Obstacles properties
         [SerializeField] Vector3 m_tunnelBeginPos;
         [SerializeField] uint m_tunnelCount;
         [SerializeField] Vector3 m_minObstacleScale;
@@ -20,11 +22,13 @@ namespace Level
 
         void Start()
         {
+            // Addressable assets
             var obstacleHandle = m_obstacleRef.LoadAssetAsync<GameObject>();
             var tunnelHandle = m_tunnelRef.LoadAssetAsync<GameObject>();
             GameObject obstaclePrefab = obstacleHandle.WaitForCompletion();
             GameObject tunnelPrefab = tunnelHandle.WaitForCompletion();
 
+            // Calc single tunnel range
             Bounds tunnelBounds = new(Vector3.zero, Vector3.zero);
             Vector3 tunnelScale = Vector3.zero;
             foreach (Transform child in tunnelPrefab.transform)
@@ -44,12 +48,16 @@ namespace Level
                 }
                 tunnelBounds.Encapsulate(child.gameObject.GetComponent<MeshFilter>().sharedMesh.bounds);
             }
+            // Fetch obstacle's bounds 
             Bounds obstacleBounds = obstaclePrefab.transform.GetComponent<MeshFilter>().sharedMesh.bounds;
             
             float tunnelPosZOffset = tunnelBounds.size.z * tunnelScale.z * tunnelPrefab.transform.localScale.z;
             for (var i = 0; i < m_tunnelCount; ++i)
             {
+                // Place tunnels
                 var tunnelObj = Instantiate(tunnelPrefab, m_tunnelBeginPos + (tunnelPosZOffset / 2 + i * tunnelPosZOffset) * Vector3.forward, Quaternion.identity, m_tunnelParentTransform);
+
+                // Calc tunnel's significant positions used at placing obstacles
                 Vector3 tunnelLeftButtomEdgePos = new(
                     tunnelObj.transform.position.x - tunnelBounds.extents.x * tunnelScale.x * tunnelObj.transform.localScale.x,
                     tunnelObj.transform.position.y - tunnelBounds.extents.y * tunnelScale.y * tunnelObj.transform.localScale.y,
@@ -59,7 +67,7 @@ namespace Level
                     tunnelLeftButtomEdgePos.y + tunnelBounds.size.y * tunnelScale.y * tunnelObj.transform.localScale.y,
                     tunnelLeftButtomEdgePos.z + tunnelBounds.size.z * tunnelScale.z * tunnelObj.transform.localScale.z);
 
-                //GameObject prevObstacleObj = null;
+                // Place obstacles
                 for (var j = 0; j < m_obstacleCountPerUnit; ++j)
                 {
                     Vector3 obstacleScale = new(
@@ -77,89 +85,8 @@ namespace Level
                         Quaternion.identity,
                         m_obstacleParentTransform);
                     obstacleObj.transform.localScale = obstacleScale;
-
-                    //if (prevObstacleObj)
-                    //{
-                    //    if (obstacleObj.GetComponent<Collider>().CompareTag("Obstacle"))
-                    //    {
-                    //        Vector3 obstacleLeftButtomEdgePos = new(
-                    //            obstacleObj.transform.position.x - obstacleBounds.extents.x * obstacleObj.transform.localScale.x,
-                    //            obstacleObj.transform.position.y - obstacleBounds.extents.y * obstacleObj.transform.localScale.y,
-                    //            obstacleObj.transform.position.z - obstacleBounds.extents.z * obstacleObj.transform.localScale.z);
-                    //        Vector3 obstacleRightButtomEdgePos = new(
-                    //            obstacleLeftButtomEdgePos.x + obstacleBounds.size.x * obstacleObj.transform.localScale.x,
-                    //            obstacleLeftButtomEdgePos.y,
-                    //            obstacleLeftButtomEdgePos.z + obstacleBounds.size.z * obstacleObj.transform.localScale.z);
-                    //        Vector3 obstacleLeftTopEdgePos = new(
-                    //            obstacleObj.transform.position.x - obstacleBounds.extents.x * obstacleObj.transform.localScale.x,
-                    //            obstacleLeftButtomEdgePos.y + obstacleBounds.size.y * obstacleObj.transform.localScale.y,
-                    //            obstacleObj.transform.position.z - obstacleBounds.extents.z * obstacleObj.transform.localScale.z);
-                    //        Vector3 obstacleRightTopEdgePos = new(
-                    //            obstacleLeftTopEdgePos.x + obstacleBounds.size.x * obstacleObj.transform.localScale.x,
-                    //            obstacleLeftTopEdgePos.y,
-                    //            obstacleLeftTopEdgePos.z + obstacleBounds.size.z * obstacleObj.transform.localScale.z);
-                    //        Vector3 obstacleLeftCenterEdgePos = new(
-                    //            obstacleObj.transform.position.x - obstacleBounds.extents.x * obstacleObj.transform.localScale.x,
-                    //            obstacleObj.transform.position.y,
-                    //            obstacleObj.transform.position.z - obstacleBounds.extents.z * obstacleObj.transform.localScale.z);
-                    //        Vector3 obstacleRightCenterEdgePos = new(
-                    //            obstacleLeftCenterEdgePos.x + obstacleBounds.size.x * obstacleObj.transform.localScale.x,
-                    //            obstacleObj.transform.position.y,
-                    //            obstacleLeftCenterEdgePos.z + obstacleBounds.size.z * obstacleObj.transform.localScale.z);
-                    //        Vector3 prevObstacleLeftButtomEdgePos = new(
-                    //            prevObstacleObj.transform.position.x - obstacleBounds.extents.x * prevObstacleObj.transform.localScale.x ,
-                    //            prevObstacleObj.transform.position.y - obstacleBounds.extents.y * prevObstacleObj.transform.localScale.y,
-                    //            prevObstacleObj.transform.position.z - obstacleBounds.extents.z * prevObstacleObj.transform.localScale.z);
-                    //        Vector3 prevObstacleRightButtomEdgePos = new(
-                    //            prevObstacleLeftButtomEdgePos.x + obstacleBounds.size.x * prevObstacleObj.transform.localScale.x,
-                    //            prevObstacleLeftButtomEdgePos.y,
-                    //            prevObstacleLeftButtomEdgePos.z + obstacleBounds.size.z * prevObstacleObj.transform.localScale.z);
-                    //        Vector3 prevObstacleLeftTopEdgePos = new(
-                    //            prevObstacleObj.transform.position.x - obstacleBounds.extents.x * prevObstacleObj.transform.localScale.x,
-                    //            prevObstacleLeftButtomEdgePos.y + obstacleBounds.size.y * prevObstacleObj.transform.localScale.y,
-                    //            prevObstacleObj.transform.position.z - obstacleBounds.extents.z * prevObstacleObj.transform.localScale.z);
-                    //        Vector3 prevObstacleRightTopEdgePos = new(
-                    //            prevObstacleLeftTopEdgePos.x + obstacleBounds.size.x * prevObstacleObj.transform.localScale.x,
-                    //            prevObstacleLeftTopEdgePos.y,
-                    //            prevObstacleLeftTopEdgePos.z + obstacleBounds.size.z * prevObstacleObj.transform.localScale.z);
-                    //        Vector3 prevObstacleLeftCenterEdgePos = new(
-                    //            prevObstacleObj.transform.position.x - obstacleBounds.size.x * prevObstacleObj.transform.localScale.x,
-                    //            prevObstacleObj.transform.position.y,
-                    //            prevObstacleObj.transform.position.z - obstacleBounds.size.z * prevObstacleObj.transform.localScale.z);
-                    //        Vector3 prevObstacleRightCenterEdgePos = new(
-                    //            prevObstacleLeftCenterEdgePos.x + obstacleBounds.size.x * prevObstacleObj.transform.localScale.x,
-                    //            prevObstacleObj.transform.position.y,
-                    //            prevObstacleLeftCenterEdgePos.z + obstacleBounds.size.z * prevObstacleObj.transform.localScale.z);
-
-                    //        Vector3 displacement = prevObstacleObj.transform.position - obstacleObj.transform.position;
-
-                    //        if (displacement.x < 0 && displacement.y < 0)
-                    //        {
-                    //            obstacleObj.transform.position = prevObstacleLeftButtomEdgePos;
-                    //        }
-                    //        else if (displacement.x < 0 && displacement.y >= 0)
-                    //        {
-                    //            obstacleObj.transform.position = prevObstacleLeftTopEdgePos;
-                    //        }
-                    //        else if (displacement.x >= 0 && displacement.y < 0)
-                    //        {
-                    //            obstacleObj.transform.position = prevObstacleRightButtomEdgePos;
-                    //        }
-                    //        else
-                    //        {
-                    //            obstacleObj.transform.position = prevObstacleRightTopEdgePos
-                    //        }
-                    //    }
-                    //}
-
-                    //prevObstacleObj = obstacleObj;
                 }
             }
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
         }
     }
 }

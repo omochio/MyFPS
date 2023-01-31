@@ -319,8 +319,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44dafa8f7e12b0c479a31d9f5e2e931b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sensX: 20
-  sensY: 20
+  sensX: 10
+  sensY: 10
 --- !u!1 &371773167
 GameObject:
   m_ObjectHideFlags: 0
@@ -362,11 +362,11 @@ MonoBehaviour:
     m_EditorAssetChanged: 0
   m_tunnelParentTransform: {fileID: 59607314}
   m_obstacleParentTransform: {fileID: 1825069909}
-  m_tunnelBeginPos: {x: 0, y: 0, z: 0}
-  m_tunnelCount: 15
+  m_tunnelBeginPos: {x: 0, y: 0, z: 100}
+  m_tunnelCount: 50
   m_minObstacleScale: {x: 5, y: 5, z: 5}
   m_maxObstacleScale: {x: 20, y: 20, z: 5}
-  m_obstacleCountPerUnit: 50
+  m_obstacleCountPerUnit: 100
 --- !u!4 &371773169
 Transform:
   m_ObjectHideFlags: 0
