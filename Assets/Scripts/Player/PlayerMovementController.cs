@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 namespace Player
@@ -7,10 +8,12 @@ namespace Player
     public class PlayerMovementController : MonoBehaviour
     {
         // Player speed variables
-        [SerializeField] float m_normalLimitSpeed;
-        [SerializeField] float m_boostLimitSpeed;
         [SerializeField] float m_normalForce;
+        [SerializeField] float m_normalUpsAndDownsForce;
+        [SerializeField] float m_normalLimitSpeed;
         [SerializeField] float m_boostForce;
+        [SerializeField] float m_boostUpsAndDownsForce;
+        [SerializeField] float m_boostLimitSpeed;
 
         // Orientation
         [SerializeField] Transform orientation;
@@ -39,7 +42,7 @@ namespace Player
 
         private void FixedUpdate()
         {
-            Move(GetMoveDirection(), m_iptElapsedFrameMgr.GetIptElapsedFrameDict());
+            Move(GetMoveDirection(), GetUpsAndDownsDirection(), m_iptElapsedFrameMgr.GetIptElapsedFrameDict());
         }
 
         Vector3 GetMoveDirection()
@@ -52,8 +55,6 @@ namespace Player
             var aKey = Keyboard.current.aKey;
             var sKey = Keyboard.current.sKey;
             var dKey = Keyboard.current.dKey;
-            var spaceKey = Keyboard.current.spaceKey;
-            var ctrlKey = Keyboard.current.ctrlKey;
 
             // If W key and S key are pressed when already pressed another one, prioritize latter one
             if (wKey.isPressed && sKey.isPressed)
@@ -102,56 +103,68 @@ namespace Player
                 }
             }
 
-            moveDirection = orientation.rotation * moveDirection;
+            return orientation.rotation * moveDirection.normalized;
+        }
+
+        Vector3 GetUpsAndDownsDirection()
+        {
+            Vector3 upsAndDownsDirection = new();
+            var iptElapsedFrameDict = m_iptElapsedFrameMgr.GetIptElapsedFrameDict();
+
+            var spaceKey = Keyboard.current.spaceKey;
+            var ctrlKey = Keyboard.current.ctrlKey;
 
             // If Space key and Ctrl key are pressed when already pressed another one, prioritize latter one
             if (spaceKey.isPressed && ctrlKey.isPressed)
             {
                 if (iptElapsedFrameDict[InputElapsedFrameManager.InputList.SpaceKey] < iptElapsedFrameDict[InputElapsedFrameManager.InputList.CtrlKey])
                 {
-                    moveDirection += Vector3.up * 5;
+                    upsAndDownsDirection += Vector3.up;
                 }
                 else
                 {
-                    moveDirection += Vector3.down * 5;
+                    upsAndDownsDirection += Vector3.down;
                 }
             }
             else
             {
                 if (spaceKey.isPressed)
                 {
-                    moveDirection += Vector3.up * 5;
+                    upsAndDownsDirection += Vector3.up;
                 }
                 if (ctrlKey.isPressed)
                 {
-                    moveDirection += Vector3.down * 5;
+                    upsAndDownsDirection += Vector3.down;
                 }
             }
 
-            return moveDirection.normalized;
+            return upsAndDownsDirection.normalized;
         }
 
-        void Move(Vector3 moveDirection, Dictionary<InputElapsedFrameManager.InputList, int> iptElapsedFrameDict)
+        void Move(Vector3 moveDirection, Vector3 upsAndDownsDirection, Dictionary<InputElapsedFrameManager.InputList, int> iptElapsedFrameDict)
         {
-            float force, limitSpeed;
+            float force, limitSpeed, upsAndDownsForce;
             // Turn boost mode on if shift key is pressed
             if (iptElapsedFrameDict[InputElapsedFrameManager.InputList.ShiftKey] == 0)
             {
                 force = m_normalForce;
                 limitSpeed = m_normalLimitSpeed;
+                upsAndDownsForce = m_normalUpsAndDownsForce;
             }
             else
             {
                 force = m_boostForce;
                 limitSpeed = m_boostLimitSpeed;
+                upsAndDownsForce = m_boostUpsAndDownsForce;
             }
 
             // Limit player speed by adding opposite direction force
-            // The closer the speed to limitSpeed, the greater the force from opposite direction
-            // The father the moveDirection to velocity, the smaller the force from opposite direction
-            var k = Mathf.Clamp01(m_rb.velocity.magnitude / limitSpeed) * (1 - Mathf.Acos(Mathf.Clamp01(Vector3.Dot(m_rb.velocity.normalized, moveDirection))) / Mathf.PI / 2);
+            var k = Mathf.Clamp01(m_rb.velocity.magnitude / limitSpeed);
+            var l = Mathf.Clamp01(new Vector3(0.0f, m_rb.velocity.y, 0.0f).magnitude / limitSpeed);
+
             m_rb.AddForce(force * moveDirection, ForceMode.Force);
-            m_rb.AddForce(force * k * -moveDirection, ForceMode.Force);
+            m_rb.AddForce(upsAndDownsForce * upsAndDownsDirection, ForceMode.Force);
+            m_rb.velocity = Vector3.ClampMagnitude(m_rb.velocity, limitSpeed);
         }
     }
 }

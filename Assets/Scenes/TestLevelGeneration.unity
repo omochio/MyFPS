@@ -319,8 +319,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44dafa8f7e12b0c479a31d9f5e2e931b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sensX: 10
-  sensY: 10
+  m_sensX: 10
+  m_sensY: 10
 --- !u!1 &371773167
 GameObject:
   m_ObjectHideFlags: 0
@@ -365,8 +365,8 @@ MonoBehaviour:
   m_tunnelBeginPos: {x: 0, y: 0, z: 100}
   m_tunnelCount: 50
   m_minObstacleScale: {x: 5, y: 5, z: 5}
-  m_maxObstacleScale: {x: 20, y: 20, z: 5}
-  m_obstacleCountPerUnit: 100
+  m_maxObstacleScale: {x: 10, y: 10, z: 5}
+  m_obstacleCountPerUnit: 500
 --- !u!4 &371773169
 Transform:
   m_ObjectHideFlags: 0
@@ -1002,7 +1002,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2046148454}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1024,10 +1024,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d6dc067361dfdee4597708a779298d2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  normalLimitSpeed: 25
-  boostLimitSpeed: 50
-  normalForce: 50
-  boostForce: 100
+  m_normalForce: 50
+  m_normalUpsAndDownsForce: 50
+  m_normalLimitSpeed: 25
+  m_boostForce: 100
+  m_boostUpsAndDownsForce: 100
+  m_boostLimitSpeed: 50
   orientation: {fileID: 954996766}
 --- !u!114 &2046148458
 MonoBehaviour:
