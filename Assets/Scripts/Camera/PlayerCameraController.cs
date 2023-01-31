@@ -6,8 +6,8 @@ namespace Player
     public class PlayerCameraController : MonoBehaviour
     {
         // Sensitivity
-        [SerializeField] float sensX = 0;
-        [SerializeField] float sensY = 0;
+        [SerializeField] float m_sensX = 0;
+        [SerializeField] float m_sensY = 0;
 
         // Player orientation
         //[SerializeField] Transform orientation;
@@ -25,8 +25,8 @@ namespace Player
         // Update is called once per frame
         void Update()
         {
-            float mouseX = Mouse.current.delta.ReadValue().x * Time.deltaTime * sensX;
-            float mouseY = Mouse.current.delta.ReadValue().y * Time.deltaTime * sensY;
+            float mouseX = Mouse.current.delta.ReadValue().x * Time.deltaTime * m_sensX;
+            float mouseY = Mouse.current.delta.ReadValue().y * Time.deltaTime * m_sensY;
 
             m_yRotation += mouseX;
             m_xRotation -= mouseY;

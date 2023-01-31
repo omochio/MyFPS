@@ -5,8 +5,8 @@ namespace Enemy
     public class EnemyMovementController : MonoBehaviour
     {
         // Enemy speed
-        [SerializeField] float limitSpeed;
-        [SerializeField] float force;
+        [SerializeField] float m_limitSpeed;
+        [SerializeField] float m_force;
 
         // Orientation
         [SerializeField] Transform orientation;
@@ -43,16 +43,16 @@ namespace Enemy
             Random.Range(0.0f, 360.0f));            
             transform.rotation = Quaternion.Euler(m_rotation);
 
-            m_rb.AddForce(m_moveDirection.normalized * force, ForceMode.Force);
+            m_rb.AddForce(m_moveDirection.normalized * m_force, ForceMode.Force);
         }
 
         void SpeedControl()
         {
             Vector3 flatVel = m_rb.velocity;
 
-            if (flatVel.magnitude > limitSpeed)
+            if (flatVel.magnitude > m_limitSpeed)
             {
-                m_rb.velocity = flatVel.normalized * limitSpeed;
+                m_rb.velocity = flatVel.normalized * m_limitSpeed;
             }
         }
     }

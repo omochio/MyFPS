@@ -6,10 +6,10 @@ namespace Enemy
 {
     public class EnemySpawnManager : MonoBehaviour
     {
-        [SerializeField] AssetReference enemyRef;
-        [SerializeField] Transform parentTransform;
-        [SerializeField] float spawnTime;
-        [SerializeField] int enemyCountLimit;
+        [SerializeField] AssetReference m_enemyRef;
+        [SerializeField] Transform m_parentTransform;
+        [SerializeField] float m_spawnTime;
+        [SerializeField] int m_enemyCountLimit;
 
         int m_enemyCount;
         Vector3 m_spawnPosition;
@@ -18,7 +18,7 @@ namespace Enemy
 
         void Awake()
         {
-            AsyncOperationHandle handle = enemyRef.LoadAssetAsync<GameObject>();
+            AsyncOperationHandle handle = m_enemyRef.LoadAssetAsync<GameObject>();
             handle.Completed += Handle_Completed;
         }
 
@@ -26,30 +26,30 @@ namespace Enemy
         {
             if (obj.Status == AsyncOperationStatus.Succeeded)
             {
-                Debug.Log($"AssetReference {enemyRef.RuntimeKey} Succeeded to load.");
+                Debug.Log($"AssetReference {m_enemyRef.RuntimeKey} Succeeded to load.");
             }
             else
             {
-                Debug.LogError($"AssetReference {enemyRef.RuntimeKey} failed to load.");
+                Debug.LogError($"AssetReference {m_enemyRef.RuntimeKey} failed to load.");
             }
         }
 
         void Update()
         {
-            if (m_enemyCount > enemyCountLimit)
+            if (m_enemyCount > m_enemyCountLimit)
             {
                 return;
             }
 
             m_timeCount += Time.deltaTime;
 
-            if (m_timeCount >= spawnTime && enemyRef.IsDone)
+            if (m_timeCount >= m_spawnTime && m_enemyRef.IsDone)
             {
                 m_spawnPosition.Set(
                 Random.Range(-50.0f, 50.0f),
                 Random.Range(-50.0f, 50.0f),
                 Random.Range(-50.0f, 50.0f));
-                Instantiate(enemyRef.Asset, m_spawnPosition, Quaternion.identity, parentTransform);
+                Instantiate(m_enemyRef.Asset, m_spawnPosition, Quaternion.identity, m_parentTransform);
                 //Debug.Log($"Enemy popped! Count: {m_enemyCount}");
                 m_timeCount = 0;
                 m_enemyCount += 1;
@@ -58,7 +58,7 @@ namespace Enemy
 
         void OnDestroy()
         {
-            enemyRef.ReleaseAsset();
+            m_enemyRef.ReleaseAsset();
         }
     }
 }

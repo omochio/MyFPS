@@ -7,10 +7,10 @@ namespace Player
     public class PlayerMovementController : MonoBehaviour
     {
         // Player speed variables
-        [SerializeField] float normalLimitSpeed;
-        [SerializeField] float boostLimitSpeed;
-        [SerializeField] float normalForce;
-        [SerializeField] float boostForce;
+        [SerializeField] float m_normalLimitSpeed;
+        [SerializeField] float m_boostLimitSpeed;
+        [SerializeField] float m_normalForce;
+        [SerializeField] float m_boostForce;
 
         // Orientation
         [SerializeField] Transform orientation;
@@ -137,13 +137,13 @@ namespace Player
             // Turn boost mode on if shift key is pressed
             if (iptElapsedFrameDict[InputElapsedFrameManager.InputList.ShiftKey] == 0)
             {
-                force = normalForce;
-                limitSpeed = normalLimitSpeed;
+                force = m_normalForce;
+                limitSpeed = m_normalLimitSpeed;
             }
             else
             {
-                force = boostForce;
-                limitSpeed = boostLimitSpeed;
+                force = m_boostForce;
+                limitSpeed = m_boostLimitSpeed;
             }
 
             // Limit player speed by adding opposite direction force
