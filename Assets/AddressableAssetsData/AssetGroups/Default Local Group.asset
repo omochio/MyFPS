@@ -18,7 +18,7 @@ MonoBehaviour:
   m_GUID: be041b10136f2d845b79e38954543243
   m_SerializeEntries:
   - m_GUID: bfa9630ad51eea6479fb177388dc3803
-    m_Address: EnemyPrefab
+    m_Address: TargetPrefab
     m_ReadOnly: 0
     m_SerializedLabels: []
   - m_GUID: c451d144a9c72f047856e64372448203
