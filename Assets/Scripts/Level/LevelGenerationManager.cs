@@ -3,6 +3,7 @@ using UnityEngine.AddressableAssets;
 
 namespace Level
 {
+
     public class LevelGenerationManager : MonoBehaviour
     {
         // Prefab references
@@ -28,6 +29,10 @@ namespace Level
         [SerializeField] Vector3 m_minTargetScale;
         [SerializeField] Vector3 m_maxTargetScale;
         [SerializeField] uint m_targetCountPerUnit;
+
+        // Tunnel end position
+        float m_tunnelEndZPos;
+        public float tunnelEndZPos { get { return m_tunnelEndZPos; } }
 
         void Start()
         {
@@ -82,6 +87,8 @@ namespace Level
                 // Place targets
                 PlaceObjectsRomdomInTunnel(targetPrefab, m_targetParentTransform, m_minTargetScale, m_maxTargetScale, m_targetCountPerUnit, tunnelLeftButtomEdgePos, tunnelRightTopEdgePos);
             }
+
+            m_tunnelEndZPos = m_tunnelBeginPos.z + tunnelBounds.size.z * tunnelScale.z * tunnelPrefab.transform.localScale.z * m_tunnelCount;
         }
 
         void PlaceObjectsRomdomInTunnel(GameObject prefab, Transform parentTransform, Vector3 minScale, Vector3 maxScale, uint count, Vector3 tunnelLeftButtomEdgePos, Vector3 tunnelRightTopEdgePos)
