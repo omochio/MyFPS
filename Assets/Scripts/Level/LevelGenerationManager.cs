@@ -59,8 +59,6 @@ namespace Level
                 }
                 tunnelBounds.Encapsulate(child.gameObject.GetComponent<MeshFilter>().sharedMesh.bounds);
             }
-            // Fetch obstacle's bounds 
-            //Bounds obstacleBounds = obstaclePrefab.transform.GetComponent<MeshFilter>().sharedMesh.bounds;
             
             float tunnelPosZOffset = tunnelBounds.size.z * tunnelScale.z * tunnelPrefab.transform.localScale.z;
             for (var i = 0; i < m_tunnelCount; ++i)
@@ -77,21 +75,6 @@ namespace Level
                     tunnelLeftButtomEdgePos.x + tunnelBounds.size.x * tunnelScale.x * tunnelObj.transform.localScale.x,
                     tunnelLeftButtomEdgePos.y + tunnelBounds.size.y * tunnelScale.y * tunnelObj.transform.localScale.y,
                     tunnelLeftButtomEdgePos.z + tunnelBounds.size.z * tunnelScale.z * tunnelObj.transform.localScale.z);
-
-                //// Place obstacles
-                //for (var j = 0; j < m_obstacleCountPerUnit; ++j)
-                //{
-                //    Vector3 obstacleScale = new(
-                //        Random.Range(m_minObstacleScale.x, m_maxObstacleScale.x),
-                //        Random.Range(m_minObstacleScale.y, m_maxObstacleScale.y),
-                //        Random.Range(m_minObstacleScale.z, m_maxObstacleScale.z));
-                //    var obstacleObj = Instantiate(
-                //        obstaclePrefab,
-                //        GetRandomPosInTunnel(obstacleBounds, obstacleScale, tunnelLeftButtomEdgePos, tunnelRightTopEdgePos),
-                //        Quaternion.identity,
-                //        m_obstacleParentTransform);
-                //    obstacleObj.transform.localScale = obstacleScale;
-                //}
 
                 // Place obstacles
                 PlaceObjectsRomdomInTunnel(obstaclePrefab, m_obstacleParentTransform, m_minObstacleScale, m_maxObstacleScale, m_obstacleCountPerUnit, tunnelLeftButtomEdgePos, tunnelRightTopEdgePos);
